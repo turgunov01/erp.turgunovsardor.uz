@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Nuxt build output
+.nuxt/
+.output/
+.data/
+dist/
+
+# Logs
+*.log
+
+# Secrets & environment — never commit
+.env
+.env.*
+!.env.example
+
+# Misc
+.DS_Store
+.vite/

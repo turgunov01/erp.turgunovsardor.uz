@@ -1,0 +1,14 @@
+{
+  "name": "TTR ONE — ERP",
+  "short_name": "TTR ONE",
+  "description": "Мобильный кладовщик: приём, расход, инвентаризация со сканером",
+  "start_url": "/m",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
