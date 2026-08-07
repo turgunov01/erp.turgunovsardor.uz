@@ -36,7 +36,10 @@ export const NAV: NavGroup[] = [
     { id: 'price-lists', to: '/price-lists', label: 'Прайс-листы', ico: '≣', perm: 'sales.read', module: 'sales' },
   ] },
   { id: 'crm', label: 'CRM', views: [
-    { id: 'deals', to: '/deals', label: 'Воронка сделок', ico: '⚑', perm: 'crm.read', module: 'crm' },
+    { id: 'crm-overview', to: '/crm', label: 'Обзор', ico: '▦', perm: 'crm.read', module: 'crm' },
+    { id: 'deals', to: '/deals', label: 'Воронка (доска)', ico: '⚑', perm: 'crm.read', module: 'crm' },
+    { id: 'crm-list', to: '/crm/deals', label: 'Список сделок', ico: '≣', perm: 'crm.read', module: 'crm' },
+    { id: 'crm-results', to: '/crm/results', label: 'Итоги', ico: '🏁', perm: 'crm.read', module: 'crm' },
   ] },
   { id: 'pos', label: 'Касса (POS)', views: [
     { id: 'pos-terminal', to: '/pos-terminal', label: 'Терминал кассира', ico: '🛒', perm: 'pos.use', module: 'pos' },
@@ -45,7 +48,7 @@ export const NAV: NavGroup[] = [
     { id: 'pos-report', to: '/pos-report', label: 'Отчёт продаж', ico: '▦', perm: 'pos.manage', module: 'pos' },
   ] },
   { id: 'projects', label: 'Проекты', views: [
-    { id: 'projects', to: '/projects', label: 'Проекты', ico: '❏', perm: 'projects.read', module: 'projects' },
+    { id: 'projects', to: '/projects', label: 'Производственные проекты', ico: '❏', perm: 'projects.read', module: 'projects' },
   ] },
   { id: 'logistics', label: 'Логистика', views: [
     { id: 'deliveries', to: '/deliveries', label: 'Рейсы и доставка', ico: '🚚', perm: 'logistics.read', module: 'logistics' },

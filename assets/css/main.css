@@ -114,7 +114,14 @@ input:focus, select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rg
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 22px; }
 .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 .panel-head h2 { font-size: 15px; margin: 0; }
-.panel-body { padding: 4px 0; }
+.panel-body { padding: 16px 18px; }
+/* Tables go edge-to-edge inside the padded body (cell padding forms the gutter, aligned
+   to the 18px header inset); non-table content keeps comfortable side padding. */
+.panel-body > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); }
+.panel-body > table:first-child { margin-top: -16px; }
+.panel-body > table:last-child { margin-bottom: -16px; }
+.panel-body > :first-child { margin-top: 0; }
+.panel-body > :last-child { margin-bottom: 0; }
 .toolbar { display: flex; gap: 10px; align-items: center; }
 .toolbar input { max-width: 260px; }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="panel">
     <div class="panel-head">
-      <h2>Проекты</h2>
+      <h2>Производственные проекты</h2>
       <div class="toolbar">
         <input v-model="search" placeholder="Поиск по названию" @keydown.enter="reload" />
         <select v-model="status" @change="reload">
@@ -21,21 +21,27 @@
     </div>
 
     <div class="panel-body">
-      <table>
-        <thead><tr><th>Код</th><th>Название</th><th>Заказчик</th><th>Менеджер</th><th class="num">Задач</th><th class="num">Бюджет</th><th>Статус</th></tr></thead>
-        <tbody>
-          <tr v-for="p in projects" :key="p.id" class="clickable" @click="open(p)">
-            <td><small class="muted">{{ p.code }}</small></td>
-            <td>{{ p.name }}</td>
-            <td>{{ p.customerName || '—' }}</td>
-            <td>{{ p.managerName || '—' }}</td>
-            <td class="num">{{ p._count.tasks }}</td>
-            <td class="num">{{ money(Number(p.budgetMinor)) }}</td>
-            <td><span class="tag" :class="p.status">{{ statusLabel(p.status) }}</span></td>
-          </tr>
-          <tr v-if="!projects.length"><td colspan="7" class="empty">Проектов нет</td></tr>
-        </tbody>
-      </table>
+      <p class="hint">ℹ️ Каждый проект — это производственный заказ. Нажмите «Подробнее», чтобы открыть проект и вести его как в Jira: доска операций, этапы производства и учёт времени.</p>
+
+      <div v-if="projects.length" class="cards">
+        <div v-for="p in projects" :key="p.id" class="pcard" @click="open(p)">
+          <div class="pcard-top">
+            <span class="code">{{ p.code }}</span>
+            <span class="tag" :class="p.status">{{ statusLabel(p.status) }}</span>
+          </div>
+          <div class="pcard-name">{{ p.name }}</div>
+          <div class="pcard-rows">
+            <div><span class="lab">Заказчик</span><span>{{ p.customerName || '—' }}</span></div>
+            <div><span class="lab">Менеджер</span><span>{{ p.managerName || '—' }}</span></div>
+          </div>
+          <div class="pcard-metrics">
+            <div class="metric"><b>{{ p._count.tasks }}</b><small>операций</small></div>
+            <div class="metric"><b>{{ money(Number(p.budgetMinor)) }}</b><small>бюджет</small></div>
+          </div>
+          <button class="btn details" @click.stop="open(p)">Подробнее →</button>
+        </div>
+      </div>
+      <div v-else class="empty-block">Проектов нет. Нажмите «+ Проект», чтобы создать первый.</div>
     </div>
   </div>
 
@@ -67,7 +73,7 @@ const search = ref(''); const status = ref('');
 const canWrite = computed(() => auth.can('projects.write'));
 
 const STATUSES = ['planning', 'active', 'on_hold', 'done', 'cancelled'];
-const STATUS: Record<string, string> = { planning: 'Планирование', active: 'В работе', on_hold: 'Приостановлен', done: 'Завершён', cancelled: 'Отменён' };
+const STATUS: Record<string, string> = { planning: 'Планирование', active: 'В производстве', on_hold: 'Приостановлен', done: 'Завершён', cancelled: 'Отменён' };
 function statusLabel(s: string) { return STATUS[s] || s; }
 
 const m = reactive<any>({ show: false, name: '', customerName: '', managerId: '', budgetUzs: 0, status: 'planning', startDate: '', endDate: '', description: '' });
@@ -98,7 +104,23 @@ onMounted(async () => {
 .tag.done { background: #dcfce7; color: #166534; }
 .tag.on_hold { background: #fef9c3; color: #854d0e; }
 .tag.cancelled { background: #fee2e2; color: #991b1b; }
-.clickable { cursor: pointer; }
-.clickable:hover { background: #f8fafc; }
+.hint { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; border-radius: 10px; padding: 10px 14px; margin: 0 0 12px; font-size: 14px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.pcard { display: flex; flex-direction: column; gap: 10px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .1s; }
+.pcard:hover { border-color: #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,.12); transform: translateY(-2px); }
+.pcard-top { display: flex; justify-content: space-between; align-items: center; }
+.code { font-family: ui-monospace, monospace; font-size: 12px; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 6px; }
+.pcard-name { font-size: 17px; font-weight: 700; line-height: 1.25; }
+.pcard-rows { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.pcard-rows > div { display: flex; justify-content: space-between; gap: 8px; }
+.pcard-rows .lab { color: #94a3b8; }
+.pcard-metrics { display: flex; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+.metric { flex: 1; text-align: center; background: #f8fafc; border-radius: 8px; padding: 8px; }
+.metric b { display: block; font-size: 16px; }
+.metric small { color: #64748b; font-size: 11px; }
+.btn.details { width: 100%; background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 9px; font-weight: 600; cursor: pointer; }
+.btn.details:hover { background: #1e40af; }
+.empty-block { border: 1px dashed #cbd5e1; border-radius: 12px; padding: 28px; text-align: center; color: #64748b; }
+
 label { display: block; font-size: 12px; color: var(--muted, #64748b); margin-top: 8px; }
 </style>
