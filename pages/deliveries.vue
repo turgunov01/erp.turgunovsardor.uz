@@ -1,7 +1,7 @@
 <template>
   <div class="panel">
     <div class="panel-head">
-      <h2>Рейсы и доставка</h2>
+      <h2>Рейсы</h2>
       <div class="toolbar">
         <select v-model="status" @change="reload"><option value="">Все</option><option v-for="s in STATUSES" :key="s" :value="s">{{ statusLabel(s) }}</option></select>
         <button v-if="canWrite" class="btn sm" @click="openCreate">+ Рейс</button>
@@ -16,6 +16,7 @@
     </div>
 
     <div class="panel-body">
+      <p class="hint">ℹ️ Рейс — это машина с водителем и списком адресов (точек). Создайте рейс, добавьте точки, затем отправьте его в путь в «Диспетчерской».</p>
       <table>
         <thead><tr><th>№</th><th>ТС</th><th>Водитель</th><th>Дата</th><th class="num">Точек</th><th class="num">Стоимость</th><th>Статус</th><th></th></tr></thead>
         <tbody>
@@ -151,5 +152,6 @@ onMounted(async () => {
 .x:hover { color: #dc2626; }
 .mini { font-size: 12px; padding: 2px 4px; }
 .kpi-sub { font-size: 12px; color: var(--muted, #64748b); }
+.hint { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; border-radius: 10px; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; }
 label { display: block; font-size: 12px; color: var(--muted, #64748b); margin-top: 8px; }
 </style>

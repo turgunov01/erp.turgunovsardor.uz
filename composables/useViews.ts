@@ -51,7 +51,9 @@ export const NAV: NavGroup[] = [
     { id: 'projects', to: '/projects', label: 'Производственные проекты', ico: '❏', perm: 'projects.read', module: 'projects' },
   ] },
   { id: 'logistics', label: 'Логистика', views: [
-    { id: 'deliveries', to: '/deliveries', label: 'Рейсы и доставка', ico: '🚚', perm: 'logistics.read', module: 'logistics' },
+    { id: 'logistics-overview', to: '/logistics', label: 'Обзор', ico: '▦', perm: 'logistics.read', module: 'logistics' },
+    { id: 'logistics-dispatch', to: '/logistics/dispatch', label: 'Диспетчерская', ico: '🗺', perm: 'logistics.read', module: 'logistics' },
+    { id: 'deliveries', to: '/deliveries', label: 'Рейсы', ico: '🚚', perm: 'logistics.read', module: 'logistics' },
     { id: 'logistics-vehicles', to: '/logistics-vehicles', label: 'Автопарк', ico: '⛟', perm: 'logistics.read', module: 'logistics' },
   ] },
   { id: 'production', label: 'Производство', views: [
