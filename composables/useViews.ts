@@ -75,6 +75,7 @@ export const NAV: NavGroup[] = [
     { id: 'finance-reports', to: '/finance-reports', label: 'Отчёты', ico: '▦', perm: 'finance.read', module: 'finance' },
   ] },
   { id: 'hr', label: 'Персонал (HR)', views: [
+    { id: 'hr-overview', to: '/hr', label: 'Обзор', ico: '▦', perm: 'hr.read', module: 'hr' },
     { id: 'employees', to: '/employees', label: 'Сотрудники', ico: '🧑', perm: 'hr.read', module: 'hr' },
     { id: 'hr-structure', to: '/hr-structure', label: 'Оргструктура', ico: '☰', perm: 'hr.read', module: 'hr' },
     { id: 'leaves', to: '/leaves', label: 'Отпуска', ico: '✈', perm: 'hr.read', module: 'hr' },
