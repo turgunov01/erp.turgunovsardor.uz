@@ -79,12 +79,26 @@
     </div>
 
     <Modal v-if="sm.show" title="Оформление тарифа" submit-label="Далее" @close="sm.show = false" @submit="submitSubscribe">
-      <div>Тариф: <b>{{ sm.plan }}</b></div>
+      <div>Тариф: <b>{{ smPlan?.name || sm.plan }}</b></div>
+
+      <label style="margin-top:12px">Период оплаты</label>
+      <div class="cycle">
+        <button type="button" :class="{ on: sm.cycle === 'monthly' }" @click="sm.cycle = 'monthly'">Помесячно</button>
+        <button type="button" :class="{ on: sm.cycle === 'annual' }" @click="sm.cycle = 'annual'">На год <span class="save">−2 месяца</span></button>
+      </div>
+
+      <template v-if="smPlan?.perUserMinor">
+        <label style="margin-top:12px">Доп. пользователи <small class="muted">(+{{ money(smPlan.perUserMinor, smPlan.currency) }}/мес за каждого сверх {{ smPlan.maxUsers }})</small></label>
+        <input v-model.number="sm.seats" type="number" min="0" max="500" />
+      </template>
+
       <label style="margin-top:12px">Способ оплаты</label>
       <select v-model="sm.method">
         <option value="bank_transfer">По реквизитам — счёт, банковский перевод (официально)</option>
         <option value="card">Картой онлайн</option>
       </select>
+
+      <div class="total">Итого: <b>{{ money(smTotal, smPlan?.currency) }}</b> <span class="muted">/ {{ sm.cycle === 'annual' ? 'год' : 'мес' }}</span></div>
       <div class="hint" style="text-align:left;margin-top:10px">«По реквизитам» — выставим официальный счёт; доступ после подтверждения оплаты. «Картой» — сейчас тестовый режим.</div>
     </Modal>
 
@@ -113,7 +127,7 @@ const { toast } = useToast();
 const cfg = useRuntimeConfig();
 
 const sub = ref<any>(null); const plans = ref<any[]>([]); const invoices = ref<any[]>([]); const req = ref<any>({}); const details = ref<any>({});
-const sm = reactive({ show: false, plan: '', method: 'bank_transfer' });
+const sm = reactive({ show: false, plan: '', method: 'bank_transfer', cycle: 'monthly', seats: 0 });
 const pm = reactive({ show: false, invoiceId: '', amount: 0, method: 'card' });
 const dm = reactive({ show: false, legalName: '', inn: '', mfo: '', address: '', bank: '', account: '', director: '', phone: '' });
 
@@ -124,7 +138,15 @@ const statusTag = computed(() => {
 });
 const lim = (v: number | null) => v === null ? '∞' : v;
 const priceLabel = (p: any) => p.priceMinor === null ? 'по запросу' : (p.priceMinor === 0 ? 'бесплатно' : money(p.priceMinor, p.currency) + '/мес');
-const canBuy = (p: any) => auth.can('tenant.manage') && (p.key === 'starter' || p.key === 'business');
+const PAID = ['starter', 'business', 'production'];
+const canBuy = (p: any) => auth.can('tenant.manage') && PAID.includes(p.key);
+// Live total for the subscribe modal: (base + seats×perUser) × (10 if annual, else 1).
+const smPlan = computed(() => plans.value.find((p) => p.key === sm.plan) || null);
+const smTotal = computed(() => {
+  const p = smPlan.value; if (!p) return 0;
+  const monthly = (p.priceMinor || 0) + (Number(sm.seats) || 0) * (p.perUserMinor || 0);
+  return monthly * (sm.cycle === 'annual' ? 10 : 1);
+});
 
 async function load() {
   const [s, pl, inv, rq, det] = await Promise.all([
@@ -134,10 +156,10 @@ async function load() {
   sub.value = s; plans.value = (pl as any).plans; invoices.value = (inv as any).invoices; req.value = (rq as any).requisites; details.value = (det as any).details;
   auth.subscription = s;
 }
-function startSubscribe(plan: string) { sm.plan = plan; sm.method = 'bank_transfer'; sm.show = true; }
+function startSubscribe(plan: string) { sm.plan = plan; sm.method = 'bank_transfer'; sm.cycle = 'monthly'; sm.seats = 0; sm.show = true; }
 async function submitSubscribe() {
   try {
-    const { invoice } = await auth.api<any>('/billing/subscribe', { method: 'POST', body: { plan: sm.plan, method: sm.method } });
+    const { invoice } = await auth.api<any>('/billing/subscribe', { method: 'POST', body: { plan: sm.plan, method: sm.method, cycle: sm.cycle, seats: Number(sm.seats) || 0 } });
     sm.show = false;
     if (sm.method === 'bank_transfer') { toast('Счёт создан'); await load(); setTimeout(() => openDoc(invoice.id), 100); }
     else { pm.invoiceId = invoice.id; pm.amount = invoice.amountMinor; pm.method = 'card'; pm.show = true; }
@@ -166,3 +188,12 @@ async function openDoc(id: string) {
 }
 onMounted(load);
 </script>
+
+<style scoped>
+.cycle { display: flex; gap: 8px; }
+.cycle button { flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #475569; }
+.cycle button.on { border-color: #2563eb; background: #eff6ff; color: #1e40af; }
+.cycle .save { display: inline-block; margin-left: 6px; font-size: 11px; color: #16a34a; font-weight: 700; }
+.total { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 16px; }
+.total b { font-size: 20px; }
+</style>
