@@ -15,14 +15,13 @@
       <div class="error">{{ error }}</div>
       <div style="text-align:center;margin-top:14px"><a href="#" class="link" @click.prevent="openForgot">{{ t('auth.forgot') }}</a></div>
       <div class="hint">
-        {{ t('auth.noAccount') }} <NuxtLink to="/register" class="link">{{ t('auth.register') }}</NuxtLink><br>
-        Демо: admin@demo-factory.com / Admin123!
+        {{ t('auth.noAccount') }} <NuxtLink to="/register" class="link">{{ t('auth.register') }}</NuxtLink>
       </div>
     </form>
 
     <Modal v-if="fm.show" title="Восстановление пароля" submit-label="Получить ссылку" @close="fm.show = false" @submit="submitForgot">
       <label>Email</label><input v-model="fm.email" type="email" />
-      <label>Тенант <span style="color:#94a3b8">(необязательно)</span></label><input v-model="fm.tenant" placeholder="demo-factory" />
+      <label>Тенант <span style="color:#94a3b8">(необязательно)</span></label><input v-model="fm.tenant" placeholder="ваш-тенант" />
     </Modal>
 
     <Modal v-if="rm.show" title="Новый пароль" submit-label="Сбросить пароль" @close="rm.show = false" @submit="submitReset">
@@ -39,8 +38,8 @@ definePageMeta({ layout: 'default' });
 const auth = useAuth();
 const { t } = useI18n();
 const { toast } = useToast();
-const email = ref('admin@demo-factory.com');
-const password = ref('Admin123!');
+const email = ref('');
+const password = ref('');
 const mfaCode = ref('');
 const needMfa = ref(false);
 const error = ref('');
