@@ -25,8 +25,10 @@
           <div v-for="p in plans" :key="p.key" class="plan" :class="{ featured: p.highlight }">
             <h3>{{ p.name }}</h3>
             <div class="price">{{ priceLabel(p) }}</div>
+            <div v-if="p.priceMinor" class="price-year">или {{ money(p.priceMinor * 10, p.currency) }}/год <span class="save2">−2 мес</span></div>
             <ul style="list-style:none;text-align:left;margin:12px 0;color:#64748b;font-size:14px">
               <li>Пользователей: {{ lim(p.maxUsers) }}</li><li>Складов: {{ lim(p.maxWarehouses) }}</li><li>Товаров: {{ lim(p.maxProducts) }}</li>
+              <li v-if="p.perUserMinor">+ {{ money(p.perUserMinor, p.currency) }}/мес за доп. пользователя</li>
             </ul>
             <button v-if="sub && sub.plan === p.key" class="btn ghost sm" disabled>Текущий</button>
             <button v-else-if="canBuy(p)" class="btn sm" @click="startSubscribe(p.key)">Оформить</button>
@@ -196,4 +198,6 @@ onMounted(load);
 .cycle .save { display: inline-block; margin-left: 6px; font-size: 11px; color: #16a34a; font-weight: 700; }
 .total { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 16px; }
 .total b { font-size: 20px; }
+.price-year { font-size: 13px; color: #64748b; margin-top: 2px; }
+.price-year .save2 { color: #16a34a; font-weight: 700; }
 </style>
